@@ -1,0 +1,106 @@
+[
+    {
+        "name": "Delayed customer order",
+        "input": {
+            "tone": "empathetic",
+            "context": "The customer order was delayed.",
+            "data_points": [
+                "Expected delivery: August 18",
+                "Actual delivery: August 20",
+                "Offer: 10% discount"
+            ]
+        },
+        "expected": {
+            "status": "valid",
+            "required_subject": true,
+            "required_body": true,
+            "validation_must_pass": true
+        }
+    },
+    {
+        "name": "Formal townhall invitation",
+        "input": {
+            "tone": "formal",
+            "context": "Inviting employees to a Townhall Meeting with the CEO.",
+            "data_points": [
+                "Date: 1/Oct/2016",
+                "Topic: New Product demo (AI integration)",
+                "Meeting time: 11:00 AM EST",
+                "Note: Turn on camera, presentable"
+            ]
+        },
+        "expected": {
+            "status": "valid",
+            "required_subject": true,
+            "required_body": true,
+            "validation_must_pass": true
+        }
+    },
+    {
+        "name": "Assertive project deadline announcement",
+        "input": {
+            "tone": "assertive",
+            "context": "Informing the development team that the project deadline must be met without further delays.",
+            "data_points": [
+                "Project: AI Email Generator",
+                "Deadline: 30/August/2026",
+                "All pending tasks must be completed before the deadline",
+                "Team members must report blockers immediately",
+                "No further deadline extensions are planned"
+            ]
+        },
+        "expected": {
+            "status": "valid",
+            "required_subject": true,
+            "required_body": true,
+            "validation_must_pass": true
+        }
+    },
+    {
+        "name": "Missing tone",
+        "input": {
+            "tone": "",
+            "context": "The customer order was delayed.",
+            "data_points": [
+                "Expected delivery: August 18",
+                "Actual delivery: August 20"
+            ]
+        },
+        "expected": {
+            "status": "missing_input",
+            "missing_parameters": [
+                "tone"
+            ]
+        }
+    },
+    {
+        "name": "Missing context",
+        "input": {
+            "tone": "formal",
+            "context": "",
+            "data_points": [
+                "Expected delivery: August 18"
+            ]
+        },
+        "expected": {
+            "status": "missing_input",
+            "missing_parameters": [
+                "context"
+            ]
+        }
+    },
+    {
+        "name": "Missing data points",
+        "input": {
+            "tone": "formal",
+            "context": "Invite the employee to a meeting.",
+            "data_points": []
+        },
+        "expected": {
+            "status": "missing_input",
+            "missing_parameters": [
+                "data_points"
+            ]
+        }
+    }
+]

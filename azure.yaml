@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: emailgenerator-agent
+services:
+    emailgenerator-agent:
+        project: .
+        host: azure.ai.agent
+        language: python
+        uses:
+            - emailgenerator-mcp-abhishek
+
+        codeConfiguration:
+            dependencyResolution: remote_build
+            entryPoint: src/emailgenerator_agent/host.py
+            runtime: python_3_13
+
+        env:
+            PYTHONPATH: src
+            MCP_SERVER_URL: https://emailgenerator-mcp-abhi.azurewebsites.net/mcp
+            AZURE_OPENAI_DEPLOYMENT: ${AZURE_OPENAI_DEPLOYMENT}
+            AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+            AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY}
+
+        container:
+            resources:
+                cpu: "0.5"
+                memory: 1Gi
+
+        kind: hosted
+        name: emailgenerator-agent
+
+        protocols:
+            - protocol: invocations
+              version: 2.0.0
+
+    emailgenerator-mcp-abhishek:
+        host: azure.ai.project
+        endpoint: https://emailgenerator-mcp-abhi-resource.services.ai.azure.com/api/projects/emailgenerator-mcp-abhishek
+
+infra:
+    provider: microsoft.foundry
