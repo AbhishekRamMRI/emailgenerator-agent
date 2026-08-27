@@ -10,7 +10,7 @@ from typing import TypedDict
 
 from .prompts import EMAIL_GENERATOR_PROMPT
 from .state import EmailState
-from .mcp_client import validate_email_with_mcp
+from ..mcp_server.tools import validate_email_content
 
 
 load_dotenv()
@@ -139,14 +139,14 @@ def validate_inputs(state: EmailState) -> EmailState:
         "retry_count": 0,
     }
 
-async def validate_email(state: EmailState) -> EmailState:
-    result = await validate_email_with_mcp(
+def validate_email(state: EmailState) -> EmailState:
+    result = validate_email_content(
         subject=state["subject"],
         body=state["body"],
     )
 
     return {
-        "validation_result": result,
+        "validation_result": result.model_dump(),
     }
 
 MAX_RETRIES = 3

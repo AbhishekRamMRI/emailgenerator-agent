@@ -1,10 +1,8 @@
 # AI Email Generator with LangGraph, Azure OpenAI & MCP
 
-An AI-powered email generation system built with **Python, LangGraph, Azure OpenAI, FastMCP, and Pydantic**.
+An AI-powered email generation and validation system built with **Python, LangGraph, Azure OpenAI, FastMCP, Pydantic, React, TypeScript, and Vite**.
 
-The project uses a **LangGraph-based workflow** to validate user inputs, generate professional emails using Azure OpenAI, and validate the generated email through an **MCP (Model Context Protocol) server**.
-
-The project is also designed to be extended with an interactive **MCP App using React + TypeScript + Vite**.
+The application generates professional emails from a user's **tone, context, and data points**, validates the generated content, and provides an interactive **MCP App** for reviewing, editing, approving, or rejecting the email.
 
 ---
 
@@ -64,9 +62,9 @@ User Input
 | uv           | Python dependency management |
 | Docker       | Containerization             |
 | Azure        | Cloud deployment             |
-| React        | Planned MCP App frontend     |
-| TypeScript   | Planned MCP App frontend     |
-| Vite         | Planned frontend build tool  |
+| React        | MCP App UI                   |
+| TypeScript   | Frontend                     |
+| Vite         | Frontend build               |
 
 ---
 
@@ -75,39 +73,41 @@ User Input
 The application consists of three major layers.
 
 ```text
-┌────────────────────────────────────────────────────┐
-│                     USER                           │
-│                                                    │
-│ Tone + Context + Data Points                       │
-└───────────────────────┬────────────────────────────┘
-                        │
-                        ▼
-┌────────────────────────────────────────────────────┐
-│                  LANGGRAPH                         │
-│                                                    │
-│  validate_inputs                                   │
-│       │                                            │
-│       ▼                                            │
-│  build_prompt                                      │
-│       │                                            │
-│       ▼                                            │
-│  generate_email ───────────► Azure OpenAI          │
-│       │                                            │
-│       ▼                                            │
-│  validate_email ───────────► MCP Server            │
-└───────────────────────┬────────────────────────────┘
-                        │
-                        ▼
-┌────────────────────────────────────────────────────┐
-│                    MCP                             │
-│                                                    │
-│              FastMCP Server                        │
-│                    │                               │
-│                    ▼                               │
-│             validate_email                        │
-└────────────────────────────────────────────────────┘
-```
-
+                    User
+                     │
+                     ▼
+             ┌─────────────────┐
+             │   React MCP App │
+             │                 │
+             │ Tone            │
+             │ Context         │
+             │ Data Points     │
+             └────────┬────────┘
+                      │
+                      │ MCP
+                      ▼
+             ┌─────────────────┐
+             │  FastMCP Server │
+             └────────┬────────┘
+                      │
+                      ▼
+             ┌─────────────────┐
+             │    LangGraph    │
+             │                 │
+             │ Validate Input  │
+             │       ↓         │
+             │ Build Prompt    │
+             │       ↓         │
+             │ Generate Email  │
+             │       ↓         │
+             │ Validate Email  │
+             └────────┬────────┘
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   Azure OpenAI  │
+             └─────────────────┘
+``` 
 ---
 
 # LangGraph Workflow
@@ -228,27 +228,54 @@ This project uses **MCP (Model Context Protocol)** to expose email-related funct
 
 The MCP server is implemented using **FastMCP**.
 
+The FastMCP server exposes the following tools:
+
+| Tool             | Purpose                        |
+| ---------------- | ------------------------------ |
+| `generate_email` | Generate and validate an email |
+| `validate_email` | Validate subject and body      |
+| `approve_email`  | Approve/send the email         |
+| `reject_email`   | Reject the email               |
+
+The MCP App UI is exposed through:
+```
+ui://email-generator
+```
+**MCP App**
+
+The frontend is built using:
+```text
+React
+TypeScript
+Vite
+@modelcontextprotocol/ext-apps
+```
+
 Current architecture:
 
 ```text
-LangGraph Application
-        │
-        │ MCP Client
-        ▼
-   FastMCP Server
-        │
-        ▼
- validate_email
-        │
-        ▼
- Validation Result
+User Input
+    │
+    ▼
+Generate Email
+    │
+    ▼
+AI Generated Email
+    │
+    ▼
+Validation
+    │
+    ▼
+User Review / Edit
+    │
+    ├──────────────┐
+    ▼              ▼
+ Approve         Reject
+    │              │
+    ▼              ▼
+approve_email  reject_email
 ```
 
-The MCP server exposes a validation tool similar to:
-
-```text
-validate_email(subject, body)
-```
 
 The LangGraph application acts as an MCP client and invokes the MCP tool when email validation is required.
 
@@ -263,32 +290,51 @@ User
  │
  │ Email requirements
  ▼
+React MCP App
+ │
+ │ mcpApp.callServerTool()
+ │
+ │ MCP request
+ ▼
+MCP Host
+ │
+ │ MCP
+ ▼
+FastMCP Server
+ │
+ │ generate_email
+ ▼
 LangGraph
  │
- ├── Validate input
+ ├── Validate Input
  │
- ├── Build prompt
+ ├── Build Prompt
  │
- ├── Call Azure OpenAI
+ ├── Generate Email
+ │       │
+ │       ▼
+ │   Azure OpenAI
+ │
+ └── Validate Email
+ │
+ ▼
+MCP Response
+ │
+ ▼
+React MCP App
  │
  ▼
 Generated Email
  │
- │ MCP tool call
  ▼
-FastMCP Server
+User Review / Edit
  │
- ▼
-validate_email
- │
- ▼
-Validation Result
- │
- ▼
-LangGraph
- │
- ▼
-Final Email
+ ├───────────────┐
+ ▼               ▼
+Approve         Reject
+ │               │
+ ▼               ▼
+approve_email   reject_email
 ```
 
 ---
@@ -300,25 +346,25 @@ emailgenerator-agent/
 │
 ├── src/
 │   └── emailgenerator_agent/
-│       │
 │       ├── agent/
 │       │   ├── graph.py
 │       │   ├── state.py
-│       │   ├── prompts.py
-│       │   └── mcp_client.py
+│       │   └── prompts.py
 │       │
 │       ├── mcp_server/
 │       │   ├── server.py
-│       │   └── tools.py
+│       │   └── ui/
+│       │       ├── src/
+│       │       │   ├── App.tsx
+│       │       │   ├── App.css
+│       │       │   └── main.tsx
+│       │       ├── package.json
+│       │       └── vite.config.ts
 │       │
-│       ├── host.py
-│       └── __init__.py
+│       └── host.py
 │
 ├── tests/
-│   └── test_mcp.py
-│
 ├── scripts/
-│
 ├── Dockerfile
 ├── pyproject.toml
 ├── uv.lock
@@ -354,6 +400,27 @@ uv --version
 
 If `uv` is not installed, follow the official installation instructions for your operating system.
 
+### Node.js
+
+Check:
+
+```bash
+node --version
+```
+
+`Node.js` is required for the frontend/MCP App UI.
+
+
+### npm
+
+Check:
+
+```bash
+npm --version
+```
+
+`npm` is required to install and manage frontend dependencies.
+
 ### Docker
 
 Optional, but required if you want to run the application in a container.
@@ -387,6 +454,33 @@ uv sync
 ```
 
 This creates/uses the project's virtual environment and installs the dependencies defined in `pyproject.toml`.
+
+
+# Frontend Installation
+
+Navigate to the MCP App directory:
+ 
+```bash
+cd src/emailgenerator_agent/mcp_server/ui
+```
+
+Install frontend dependencies:
+
+```bash
+npm install
+```
+
+Build the application:
+
+```bash
+npm run build
+```
+
+Return to the project root when required:
+
+```bash
+cd ../../../../..
+```
 
 ---
 
@@ -434,15 +528,61 @@ http://localhost:8000/mcp
 
 ---
 
-# ▶️ Running the Email Generator
+# ▶Building MCP App
 
-Run the application host:
+Open another terminal:
 
 ```bash
-uv run python -m emailgenerator_agent.host
+cd src/emailgenerator_agent/mcp_server/ui
 ```
 
-The host initializes the LangGraph email-generation workflow and communicates with the MCP server.
+Build:
+
+```bash
+npm run build
+```
+---
+
+# ▶ Start the MCP Host
+
+Run the MCP-compatible host used for local testing.
+
+The host connects to:
+
+```text
+http://localhost:8000/mcp
+```
+
+The host retrieves:
+
+```text
+ui://email-generator
+```
+
+and renders the React MCP App.
+
+---
+
+# ▶MCP Inspector
+
+Start the MCP Inspector:
+
+```bash
+npx @modelcontextprotocol/inspector \
+  http://127.0.0.1:8000/mcp
+```
+
+Test approve_email directly:
+
+```bash
+npx @modelcontextprotocol/inspector \
+  --cli \
+  http://127.0.0.1:8000/mcp \
+  --transport http \
+  --method tools/call \
+  --tool-name approve_email \
+  --tool-args-json '{"subject":"Test Subject","body":"This is a test email body."}'
+```
 
 ---
 
@@ -450,29 +590,13 @@ The host initializes the LangGraph email-generation workflow and communicates wi
 
 Example input:
 
-```json
-{
+```text
   "tone": "professional",
   "context": "Follow up with a client about the project timeline",
-  "data_points": [
+  "data_points": 
     "Discussed the project timeline",
     "Client approval is required",
     "Next meeting is scheduled for next week"
-  ]
-}
-```
-
----
-
-# Example Output
-
-Example generated result:
-
-```json
-{
-  "subject": "Follow-up on Project Timeline",
-  "body": "Dear Client,\n\nI wanted to follow up regarding our recent discussion about the project timeline. We are currently awaiting your approval before proceeding with the next phase.\n\nPlease let me know if you have any questions or if you would like to discuss the timeline further.\n\nBest regards"
-}
 ```
 
 ---
@@ -540,18 +664,72 @@ Never commit Azure credentials or secrets to the repository.
 
 ---
 
-# 🧩 Planned MCP App Integration
+# End to End Request Flow
 
-The next stage of the project is to add an interactive **MCP App**.
 
-The planned frontend stack is:
+```text
+                         USER
+                           │
+                           ▼
+                 ┌────────────────────┐
+                 │    React MCP App   │
+                 │                    │
+                 │ Tone               │
+                 │ Context            │
+                 │ Data Points        │
+                 └─────────┬──────────┘
+                           │
+                           │ MCP Apps Bridge
+                           ▼
+                 ┌────────────────────┐
+                 │      MCP Host      │
+                 └─────────┬──────────┘
+                           │
+                           │ MCP
+                           ▼
+                 ┌────────────────────┐
+                 │   FastMCP Server   │
+                 │                    │
+                 │ generate_email     │
+                 │ validate_email     │
+                 │ approve_email      │
+                 │ reject_email       │
+                 └─────────┬──────────┘
+                           │
+                           ▼
+                 ┌────────────────────┐
+                 │     LangGraph      │
+                 │                    │
+                 │ validate_inputs    │
+                 │        │           │
+                 │        ▼           │
+                 │ build_prompt       │
+                 │        │           │
+                 │        ▼           │
+                 │ generate_email     │
+                 │        │           │
+                 │        ▼           │
+                 │ validate_email     │
+                 └─────────┬──────────┘
+                           │
+                           ▼
+                 ┌────────────────────┐
+                 │    Azure OpenAI    │
+                 └─────────┬──────────┘
+                           │
+                           ▼
+                     Generated Email
+                           │
+                           ▼
+                       User Review
+                           │
+                     ┌─────┴─────┐
+                     ▼           ▼
+                  Approve       Reject
+                     │           │
+                     ▼           ▼
+              approve_email  reject_email
 
-* React
-* TypeScript
-* Vite
-* `@modelcontextprotocol/ext-apps`
-
-The MCP App will provide a graphical interface for generating emails.
-
+```
 ---
 

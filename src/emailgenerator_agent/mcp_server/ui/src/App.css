@@ -1,0 +1,770 @@
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+
+:root {
+  /* Colors */
+  --color-bg: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f8fafc;
+
+  --color-text: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-soft: rgba(79, 70, 229, 0.08);
+
+  --color-success: #16a34a;
+  --color-success-hover: #15803d;
+  --color-success-soft: rgba(22, 163, 74, 0.08);
+
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-soft: rgba(220, 38, 38, 0.06);
+
+  /* Shadows */
+  --shadow-card:
+    0 1px 2px rgba(15, 23, 42, 0.05),
+    0 14px 36px rgba(37, 99, 235, 0.11);
+
+  --shadow-button:
+    0 6px 14px rgba(79, 70, 229, 0.18);
+
+  /* Radius */
+  --radius-xl: 20px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
+  --radius-full: 999px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Layout */
+  --container-width: 1120px;
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 16px;
+  line-height: 1.5;
+
+  color: var(--color-text);
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fbff 0%,
+      #eef4ff 45%,
+      #e9f4ff 100%
+    ),
+    radial-gradient(
+      circle at 8% 10%,
+      rgba(111, 132, 255, 0.2),
+      transparent 40%
+    );
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled,
+input:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   APP LAYOUT
+   ========================================================= */
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+
+  padding:
+    clamp(24px, 5vw, 48px)
+    20px
+    56px;
+}
+
+.container {
+  width: min(var(--container-width), 100%);
+  margin: 0 auto;
+
+  display: grid;
+  gap: var(--space-6);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.app-header {
+  display: flex;
+  justify-content: center;
+
+  gap: var(--space-6);
+  padding: 0 4px 4px;
+}
+
+.app-header__content {
+  max-width: 680px;
+  min-width: 0;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.055em;
+}
+
+.app-header p {
+  max-width: 560px;
+  margin: 12px auto 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+  position: relative;
+
+  min-width: 0;
+
+  padding: clamp(20px, 3vw, 28px);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(247, 250, 255, 0.94) 100%
+    );
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-card);
+}
+
+/*
+ * Small visual accent without making the card feel
+ * overly decorative.
+ */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.card h2 {
+  margin: 0;
+
+  color: var(--color-text);
+
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  line-height: 1.25;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+
+  min-width: 0;
+}
+
+.section-header > * {
+  min-width: 0;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  min-height: 32px;
+  padding: 6px 10px;
+
+  border:
+    1px solid
+    rgba(79, 70, 229, 0.16);
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary-soft);
+
+  color: var(--color-primary-hover);
+
+  font-size: 0.7rem;
+  line-height: 1;
+  font-weight: 750;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.form-group {
+  min-width: 0;
+}
+
+.form-group + .form-group {
+  margin-top: var(--space-5);
+}
+
+label {
+  display: block;
+
+  margin: 0 0 var(--space-2);
+
+  color: var(--color-text-secondary);
+
+  font-size: 0.75rem;
+  line-height: 1.3;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-width: 0;
+
+  padding: 13px 14px;
+
+  color: var(--color-text);
+  background: var(--color-surface);
+
+  border:
+    1px solid
+    rgba(148, 163, 184, 0.28);
+
+  border-radius: var(--radius-md);
+
+  outline: none;
+
+  box-shadow:
+    inset 0 1px 1px rgba(148, 163, 184, 0.06);
+
+  transition:
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    background-color var(--transition-normal);
+}
+
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: rgba(100, 116, 139, 0.35);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: rgba(79, 70, 229, 0.42);
+
+  box-shadow:
+    0 0 0 3px rgba(79, 70, 229, 0.12),
+    inset 0 1px 1px rgba(79, 70, 229, 0.08);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+textarea {
+  min-height: 120px;
+
+  resize: vertical;
+
+  line-height: 1.55;
+}
+
+select {
+  appearance: none;
+
+  padding-right: 42px;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--color-text-secondary) 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--color-text-secondary) 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 17px) calc(50% - 2px),
+    calc(100% - 12px) calc(50% - 2px);
+
+  background-size:
+    5px 5px,
+    5px 5px;
+
+  background-repeat: no-repeat;
+}
+
+
+/* =========================================================
+   BUTTON BASE
+   ========================================================= */
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+
+  padding: 11px 18px;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+
+  font-size: 0.95rem;
+  line-height: 1.2;
+  font-weight: 700;
+
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:focus-visible {
+  outline: none;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 70, 229, 0.18);
+}
+
+button:disabled {
+  opacity: 0.55;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.primary-button {
+  min-width: 180px;
+  margin-top: var(--space-6);
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6f7dff 0%,
+      #5764e8 100%
+    );
+
+  box-shadow: var(--shadow-button);
+}
+
+.primary-button:hover:not(:disabled) {
+  background:
+    linear-gradient(
+      135deg,
+      #5967ef 0%,
+      #4f59db 100%
+    );
+
+  box-shadow:
+    0 8px 18px
+    rgba(79, 70, 229, 0.22);
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  gap: var(--space-3);
+
+  margin-top: var(--space-6);
+}
+
+.actions button {
+  min-width: 160px;
+}
+
+
+/* =========================================================
+   APPROVE BUTTON
+   ========================================================= */
+
+.approve-button {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #22a857 0%,
+      #179347 100%
+    );
+
+  box-shadow:
+    0 6px 14px
+    rgba(22, 163, 74, 0.16);
+}
+
+.approve-button:hover:not(:disabled) {
+  background: var(--color-success-hover);
+
+  box-shadow:
+    0 8px 18px
+    rgba(22, 163, 74, 0.2);
+}
+
+
+/* =========================================================
+   REJECT BUTTON
+   ========================================================= */
+
+.reject-button {
+  color: #a93535;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff2f2 0%,
+      #fee7e7 100%
+    );
+
+  border-color:
+    rgba(220, 38, 38, 0.18);
+}
+
+.reject-button:hover:not(:disabled) {
+  color: var(--color-danger-hover);
+
+  background:
+    rgba(220, 38, 38, 0.1);
+
+  border-color:
+    rgba(220, 38, 38, 0.28);
+}
+
+
+/* =========================================================
+   VALIDATION / MESSAGE
+   ========================================================= */
+
+.validation {
+  display: flex;
+  align-items: flex-start;
+
+  min-width: 0;
+  min-height: 52px;
+
+  margin-top: var(--space-5);
+  padding: 13px 14px;
+
+  color: var(--color-text-secondary);
+
+  background: var(--color-surface-subtle);
+
+  border:
+    1px solid
+    var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  font-size: 0.92rem;
+  line-height: 1.5;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+.mail-preview {
+  margin-top: 4px;
+  margin-bottom: var(--space-5);
+  padding: 16px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(245, 249, 255, 0.9) 100%
+    );
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 8px 24px rgba(59, 130, 246, 0.08);
+}
+
+.mail-info {
+  margin-top: var(--space-4);
+}
+
+.mail-info ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: var(--color-text-secondary);
+}
+
+.mail-info li + li {
+  margin-top: 6px;
+}
+
+.mail-info p {
+  margin: 10px 0 0;
+  color: var(--color-text-muted);
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 840px) {
+  .app {
+    padding-top: 32px;
+  }
+
+  .app-header p {
+    max-width: 640px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .app {
+    padding:
+      20px
+      14px
+      40px;
+  }
+
+  .container {
+    gap: 18px;
+  }
+
+  .app-header {
+    gap: 14px;
+    padding: 0;
+  }
+
+  .app-header h1 {
+    font-size: clamp(1.9rem, 9vw, 2.5rem);
+  }
+
+  .app-header p {
+    margin-top: 10px;
+    font-size: 0.95rem;
+  }
+
+  .card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .card::before {
+    border-radius: inherit;
+  }
+
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .status {
+    min-height: 30px;
+  }
+
+  .actions button {
+    min-width: 140px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 12px 13px;
+  }
+
+  button {
+    min-height: 46px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 360px) {
+  .app {
+    padding-inline: 10px;
+  }
+
+  .card {
+    padding-inline: 14px;
+  }
+
+  .app-header h1 {
+    font-size: 1.85rem;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
